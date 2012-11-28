@@ -49,6 +49,7 @@ exports.logout = function() {
 	Cloud.Users.logout(function (e) {
     	if (e.success) {
     	    alert('Success: Logged out');
+    		Ti.App.fireEvent('app:logout_success');
     	} else {
     	    alert('Error:\\n' + ((e.error && e.message) || JSON.stringify(e)));
     	}

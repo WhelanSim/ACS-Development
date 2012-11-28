@@ -68,6 +68,15 @@ function ListWindow(_args) {
 			addWin.open();
 		});
 		self.rightNavButton = addBtn;
+		
+		//add a logout button
+		var logoutBtn = Ti.UI.createButton({
+			title:'Logout'
+		});
+		logoutBtn.addEventListener('click', function() {
+			todo.logout();
+		});
+		self.leftNavButton = logoutBtn;
 	}
 	
 	// If we are looking at the todo task list we listen for an app level

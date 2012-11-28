@@ -60,6 +60,13 @@ function ApplicationTabGroup() {
 		loginWin.open({modal:true});
 	});
 	
+	// when successful log out, reactivate the login window for another login 
+	Ti.App.addEventListener('app:logout_success', function(){
+		var LoginWindow = require('ui/LoginWindow'),
+			loginWin = new LoginWindow();
+			loginWin.open({modal:true});
+	});
+	
 	return self;
 };
 
