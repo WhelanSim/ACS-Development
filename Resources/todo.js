@@ -4,10 +4,12 @@
  */
 var Cloud = require('ti.cloud');
 
-// Store the userid and username for quick access
+// Store the userid, username & session_id for quick access
 exports.storeUser = function(_user) {
-	Ti.App.Properties.setString('todo_uid', _user.id);
-	Ti.App.Properties.setString('todo_username', _user.username);
+	var user = _user.users[0];
+	Ti.App.Properties.setString('todo_uid', user.id);
+	Ti.App.Properties.setString('todo_username', user.username);
+	Ti.App.Properties.setString('session_id', _user.meta.session_id);
 };
 
 // Register a new user with ACS.
@@ -31,7 +33,9 @@ exports.login = function(_args) {
 	Cloud.Users.login(_args, function(e) {
 		if (e.success) {
 			alert("Login Successful!");
-			exports.storeUser(e.users[0]);
+			Ti.API.info('Login Success:' + JSON.stringify(e));
+			//exports.storeUser(e.users[0]);
+			exports.storeUser(e);
 			exports.fetch();
 			Ti.App.fireEvent('app:login_success');
 		} else {
@@ -48,6 +52,7 @@ exports.login = function(_args) {
 exports.logout = function() {
 	Cloud.Users.logout(function (e) {
     	if (e.success) {
+    		Ti.App.Properties.setString('session_id', '');
     	    alert('Success: Logged out');
     		Ti.App.fireEvent('app:logout_success');
     	} else {
@@ -70,7 +75,7 @@ exports.fetch = function() {
 		limit:100
 	}, function(e) {
 		if (e.success) {
-			Ti.API.info("SUCCESS:"+JSON.stringify(e));
+			Ti.API.info("FETCH SUCCESS:"+JSON.stringify(e));
 			Ti.App.fireEvent('app:update_tables', {tasks:e[classname]});
 		} else {
 			alert('Error:\\n' + ((e.error && e.message) || JSON.stringify(e)));

@@ -54,14 +54,25 @@ function ApplicationTabGroup() {
 	// When the tabgroup opens, launch the login window as a modal window.
 	// TODO: Store the session id and restore the session automatically if 
 	// it exists. This would bypass the login screen and fetch the users tasks
+	var todo = require('todo');
+	//initialize the session_id as empty string
 	self.addEventListener('open', function() {
-		var LoginWindow = require('ui/LoginWindow'),
+		var session = Ti.App.Properties.getString('session_id');
+		Ti.API.info('session_id: '+session);
+		if(session === null || session === ''){
+			var LoginWindow = require('ui/LoginWindow'),
 			loginWin = new LoginWindow();
-		loginWin.open({modal:true});
+			loginWin.open({modal:true});
+		}
+		else{
+			todo.fetch();
+		}
 	});
 	
 	// when successful log out, reactivate the login window for another login 
 	Ti.App.addEventListener('app:logout_success', function(){
+		// set the session id to empty
+		Ti.App.Properties.setString('session_id', '');
 		var LoginWindow = require('ui/LoginWindow'),
 			loginWin = new LoginWindow();
 			loginWin.open({modal:true});
